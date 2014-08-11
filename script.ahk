@@ -9,7 +9,8 @@ SetKeyDelay, -1, 5
 rand:=1
 
 gui, +ToolWindow +AlwaysOnTop
-gui, show, w200 h200
+gui, add, text,, Drop file on it
+gui, show, x0 y0 w200 h200
 Return
 
 GuiClose:
@@ -150,13 +151,13 @@ ToolTip
 Return
 
 #IfWinActive, osu!
-Left::
+~Left::
 startTime-=5
 ; ToolTip, % startTime
 ; SetTimer, killTT, -500
 Return
 
-Right::
+~Right::
 startTime+=5
 ; ToolTip, % startTime
 ; SetTimer, killTT, -500
