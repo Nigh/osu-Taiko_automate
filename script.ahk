@@ -33,25 +33,44 @@ DllCall("QueryPerformanceFrequency", "Int64P", freq)	;系统时钟频率
 
 Loop, Parse, file, `n
 {
-	IfInString, A_LoopField, [HitObjects]
+	lineContext:=A_LoopField
+	IfInString, lineContext, [HitObjects]
 		detected:=1
 	if(!detected)
 		Continue
-	if(RegExMatch(A_LoopField, "\d+,\d+,(\d+),(\d+),(\d+)", match))
+	if(RegExMatch(lineContext, "\d+,\d+,(\d+),(\d+),(\d+)", match))
 	{
 		; Msgbox, % match1 " " match2
 		osu.time.Insert(match1+0)
 		osu.event.Insert(match3+0)
 
+; example:
 ; 272,256,69085,2,0,L|400:240|88:240,1,420
-
-		if((match2+0)=2 and RegExMatch(A_LoopField, "(\d+),(\d+),(\d+),(?:\d+,){2}L(?:\|(\d+:\d+))+,\d+,(\d+)", matchEx))
+; distance:441
+; speed:420
+; time:441/420 sec
+		if((match2+0)=2 and RegExMatch(lineContext, "(\d+),(\d+),(?:\d+,){3}L((?:\|\d+:\d+)+),\d+,(\d+)", matchEx))
 		{
-			; Msgbox, % matchEx4
+			tempPoint:=[]
+			tempPoint.x:=matchEx1
+			tempPoint.y:=matchEx2
+			context:=matchEx3
+			speed:=matchEx4
+			distance:=0
+			Loop, Parse, context, |
+			{
+				if(RegExMatch(A_LoopField, "(\d+):(\d+)", matchTemp))
+				{
+					distance+=((tempPoint.x-matchTemp1)**2+(tempPoint.y-matchTemp2)**2)**0.5
+					tempPoint.x:=matchTemp1
+					tempPoint.y:=matchTemp2
+				}
+			}
+			time:=Round(1000*distance/speed)
 			osu.event[osu.event.MaxIndex()]:=254
-			osu.eventover.Insert(matchEx1+0)
+			osu.eventover.Insert(match1+time)
 		}
-		else if((match2+0)=12 and RegExMatch(A_LoopField, "(?:\d+,){5}(\d+)", matchEx))
+		else if((match2+0)=12 and RegExMatch(lineContext, "(?:\d+,){5}(\d+)", matchEx))
 		{
 			osu.event[osu.event.MaxIndex()]:=255
 			osu.eventover.Insert(matchEx1+0)
@@ -60,7 +79,6 @@ Loop, Parse, file, `n
 		{
 			osu.eventover.Insert(0)
 		}
-		; Msgbox, % match1+0 "`n" match2+0
 	}
 }
 
