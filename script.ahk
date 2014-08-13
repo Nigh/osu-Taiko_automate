@@ -1,9 +1,12 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿; last version for taiko only;
+; a new repository that supports `osu!` and `taiko` will be create soon;
+
+
+#NoEnv
 #SingleInstance force
-; #Warn  ; Enable warnings to assist with detecting common errors.
 SetBatchLines, -1
-SendMode event  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+SendMode event
+SetWorkingDir %A_ScriptDir%
 SetKeyDelay, 1, 1
 
 rand:=1
